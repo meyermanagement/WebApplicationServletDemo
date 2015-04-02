@@ -5,98 +5,64 @@
  */
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-/**
- *
- * @author Dave
- */
 public class ServletDemo extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+@Override
+ protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ServletDemo</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ServletDemo at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+           // session object creation
+           HttpSession newSession = request.getSession(true);
+      // Session creation time.
+      Date cTime = new Date(newSession.getCreationTime());
+      // The last time the client sent a request.
+      Date lTime = new Date( newSession.getLastAccessedTime());
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        try{
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlets</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<br /><p><h2>First Demo Servlet application</h2><br />Here, the URL-pattern is ServletDemo in web.xml. So, the address is <i>WebApplicationServletDemo/ServletDemo</i>.</p>");
-            out.println("<br /><br /><a href=\"index.html\">Previous Page</a>");
-            out.println("</body>");
-            out.println("</html>");
-            }
-            finally
-            {
-            out.close();
-            
-        }
-    }
+      /* sets the time, in seconds, between client requests before the servlet container    
+      invalidates this session */
+      newSession.setMaxInactiveInterval(1 * 60 * 60);
+      String str = "Website | Session";
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
+      response.setContentType("text/html");
+      PrintWriter out = response.getWriter();
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+      String document =
+      "<!doctype html public \"-//w3c//dtd html 4.0 " +
+      "transitional//en\">\n";
+      out.println(document +
+                "<html>\n" +
+                "<head><title>" + str + "</title></head>\n" +
+                "<body bgcolor=\"#bbf5f0\">\n" +
+                 "<h2>Website: Displaying Session Information</h2>\n" +
+                "<table border=\"2\">\n" +
+                "<tr>\n" +
+                "  <td>Unique identifier assigned to this session</td>\n" +
+                "  <td>" + newSession.getId() + "</td>"
+              + "</tr>\n" +
+                "<tr>\n" +
+                "  <td>The time when this session was created</td>\n" +
+                "  <td>" + cTime + 
+                "  </td>"
+              + "</tr>\n" +
+                "<tr>\n" +
+                "  <td>The last time the client sent a request associated with this session</td>\n"
+              + "  <td>" + lTime + 
+                "  </td>"
+              + "</tr>\n" +
+                "</tr>\n" +
+                "<tr>\n" +
+                "  <td> the maximum time interval, in seconds that the servlet container will keep this session open between client accesses.</td>\n" +
+                "  <td>" + newSession.getMaxInactiveInterval() + 
+                "  </td>"
+              + "</tr>\n" +
+                     "</table>\n" +
+                "</body></html>");
+  }
 }
+
